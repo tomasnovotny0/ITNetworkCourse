@@ -3,66 +3,33 @@
 namespace CSharpCourse {
     class Program {
         static void Main(string[] args) {
-            ExecuteExercise1();
-            ExecuteExercise2();
-            ExecuteExercise3();
         }
-
-        /*
-         * Difficulty - Easy
-         * Input - name, property
-         * Output - $name is $property
-         */
-        static void ExecuteExercise1() {
-            Console.WriteLine("Enter name:");
+        
+        static void Cviceni1() {
+            Console.WriteLine("Hi, what is your name?");
             string name = Console.ReadLine();
-            Console.WriteLine("Enter property:");
+            Console.WriteLine("What are you like?");
             string property = Console.ReadLine();
             Console.WriteLine("{0} is {1}", name, property);
             Console.ReadKey();
         }
-
-        /*
-         * Difficulty - Medium
-         * Input - number (integer)
-         * Output - number^2
-         */
-        static void ExecuteExercise2() {
-            Console.WriteLine("Enter number:");
-            string entry = Console.ReadLine();
-            int number = int.Parse(entry); // unsafe
-            Console.WriteLine("Result: " + number * number);
+        
+        static void Cviceni2() {
+            Console.WriteLine("Zadej číslo k umocnění:");
+            int number = int.Parse(Console.ReadLine());
+            Console.WriteLine("Výsledek: " + number * number);
             Console.ReadKey();
         }
-
-        /*
-         * Difficulty - Advanced
-         * Input - Circle radius
-         * Output - Perimeter, Area
-         * PI value - 3.1415
-         */
-        static void ExecuteExercise3() {
+        
+        static void Cviceni3() {
             float PI = 3.1415F;
-            Console.WriteLine("Enter circle radius:");
-            string entry = Console.ReadLine();
-            bool validNumber = false;
-            float radius = 0;
-            while (!validNumber) {
-                try {
-                    radius = float.Parse(entry);
-                    validNumber = true;
-                }
-                catch (FormatException e) {
-                    Console.WriteLine($"{entry} is not a valid number");
-                    entry = Console.ReadLine();
-                }
-            }
-
+            Console.WriteLine("Zadej poloměr kruhu (cm):");
+            float radius = float.Parse(Console.ReadLine());
             float perimeter = 2 * PI * radius;
             float radius2 = radius * radius;
-            float area = 2 * PI * radius2;
-            Console.WriteLine("Circle perimeter is {0}", perimeter);
-            Console.WriteLine("Circle area is {0}", area);
+            float area = PI * radius2;
+            Console.WriteLine("Obvod zadaného kruhu je: {0} cm", perimeter);
+            Console.WriteLine("Jeho obsah je {0} cm^2", area);
             Console.ReadKey();
         }
     }

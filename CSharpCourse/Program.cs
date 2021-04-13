@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace CSharpCourse {
     class Program {
         static void Main(string[] args) {
-            Cviceni3();
+            Cviceni6();
             return;
             
             Console.WriteLine("Zadej text:");
@@ -28,11 +27,11 @@ namespace CSharpCourse {
             int znakAscii = znak;
             
             // šifrování
-            string s = "textkzasifrovani";
-            Console.WriteLine("Původní text " + s);
+            string str = "textkzasifrovani";
+            Console.WriteLine("Původní text " + str);
             string sifrovane = "";
             int posun = 1;
-            foreach (char c in s) {
+            foreach (char c in str) {
                 char novyZnak = (char) (c + posun);
                 if (novyZnak > 'z') {
                     novyZnak = (char) (novyZnak - 26);
@@ -41,6 +40,42 @@ namespace CSharpCourse {
             }
 
             Console.WriteLine("Šifrovaná zpráva je " + sifrovane);
+            
+            // užitečné metody pro string
+            // Insert(index, text)
+            // Remove(index1, ? index2)
+            // Substring()
+            // CompareTo()
+            // Split(), Join()
+            
+            // Dekodér morseovky
+            // řetězec, který chceme dekódovat
+            string s = ".. - -. . - .-- --- .-. -.-";
+            Console.WriteLine("Původní zpráva: {0}", s);
+            // řetězec s dekódovanou zprávou
+            string zprava = "";
+
+            // vzorová pole
+            string abecedniZnaky = "abcdefghijklmnopqrstuvwxyz";
+            string[] morseovyZnaky = {".-", "-...", "-.-.", "-..", ".", "..-.", "--.", "....",
+                "..", ".---", "-.-", ".-..", "--", "-.", "---", ".--.", "--.-", ".-.", "...", "-", "..-",
+                "...-", ".--", "-..-", "-.--", "--.."};
+            // dekódování
+            string[] znaky = s.Split(' ');
+            foreach (string znakMorseovky in znaky) {
+                char abecedniZnak = '?';
+                int idx = Array.IndexOf(morseovyZnaky, znakMorseovky);
+                if (idx >= 0)
+                    abecedniZnak = abecedniZnaky[idx];
+                zprava += abecedniZnak;
+            }
+
+            Console.WriteLine("Dekódovaná zpráva: {0}", zprava);
+            
+            // Escape sekvence
+            // \n - odřádkování
+            // \t - tabulátor
+            // automatické escapování řetězce - @"text\text"
         }
 
         /*
@@ -101,6 +136,78 @@ namespace CSharpCourse {
                 sifra += sifrovanyZnak;
             }
             Console.WriteLine(sifra);
+        }
+
+        /*
+         * Naprogramujte aplikaci, která vypočítá průměr ze zadaných známek.
+         * Vstup uživatel zadá jako jeden textový řetězec, kde jsou jednotlivé známky oddělené čárkou. Průměr by měl být desetinné číslo.
+         */
+        static void Cviceni4() {
+            Console.WriteLine("Výpočet průměru známek");
+            Console.WriteLine("Zadejte známky oddělené čárkou:");
+            string[] znamky = Console.ReadLine().Split(',');
+            int soucet = 0;
+            foreach (string znamka in znamky) {
+                int hodnota = int.Parse(znamka);
+                soucet += hodnota;
+            }
+            double prumer = soucet / (double) znamky.Length;
+            Console.WriteLine("Průměr: {0}", prumer);
+        }
+
+        /*
+         * Naprogramujte převaděč zadaného textu do morzeovy abecedy, tedy opačný příklad k tomu, který byl v článku.
+         * Speciální znaky a diakritiku zanedbejte (vynechte je - ve výpisu se nezobrazí místo nich nic).
+         */
+        static void Cviceni5() {
+            Console.WriteLine("Zadejte zprávu k zakódování:");
+            string text = Console.ReadLine().ToLower();
+            string abecedniZnaky = "abcdefghijklmnopqrstuvwxyz";
+            string[] morseovyZnaky = {".-", "-...", "-.-.", "-..", ".", "..-.", "--.", "....",
+                "..", ".---", "-.-", ".-..", "--", "-.", "---", ".--.", "--.-", ".-.", "...", "-", "..-",
+                "...-", ".--", "-..-", "-.--", "--.."};
+            string sifrovane = "";
+            foreach (char znak in text) {
+                int index = abecedniZnaky.IndexOf(znak);
+                if(index < 0)
+                    continue;
+                string morse = morseovyZnaky[index];
+                sifrovane += morse + " ";
+            }
+
+            Console.WriteLine("Zakódovaná zpráva: " + sifrovane);
+        }
+
+        /*
+         * Naprogramujte rozveselovač textu. Aplikace funguje tak, že ji zadáte několik vět v jednom řetězci a ona za každou větu přidá smajlík.
+         * Věta může končit buď tečkou, otazníkem nebo vykřičníkem. Pokud končí tečkou, bude smajlík umístěn místo ní.
+         * Pokud ! nebo ?, bude umístěn za toto znaménko.
+         * Smajlíci jsou postupně dosazovány v tomto pořadí:
+         *     :) :D :P
+         *
+         * Čtvrtý smajlík v textu bude opět usměvavý, další rozesmátý a tak stále dokola.
+         */
+        static void Cviceni6() {
+            Console.WriteLine("Zadej text k rozveselení:");
+            char[] interpunkce = {'.', '?', '!'};
+            string[] smajlici = {":)", ":D", ":P"};
+            string text = Console.ReadLine();
+            int index = 0;
+            int indexSmajliku = 0;
+            while (index < text.Length) {
+                if (interpunkce.Contains(text[index])) {
+                    if (text[index] == '.') {
+                        text = text.Remove(index, 1);
+                        --index;
+                    }
+
+                    text = text.Insert(index + 1, " " + smajlici[indexSmajliku++ % 3]);
+                    ++index;
+                }
+
+                ++index;
+            }
+            Console.WriteLine("Rozveselený text: " + text);
         }
     }
 }

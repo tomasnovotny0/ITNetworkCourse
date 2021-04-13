@@ -4,9 +4,6 @@ using System.Linq;
 namespace CSharpCourse {
     class Program {
         static void Main(string[] args) {
-            Cviceni6();
-            return;
-            
             Console.WriteLine("Zadej text:");
             string text = Console.ReadLine().ToLower();
             int pocetSamohlasek = 0;

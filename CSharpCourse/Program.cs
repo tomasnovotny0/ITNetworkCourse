@@ -283,6 +283,52 @@ namespace CSharpCourse {
                     }
                 }
             }
+
+            /*
+             * Pomocí goniometrické funkce sinus vykreslete do konzole jednu periodu sinusoidy (grafu této funkce)
+             *
+             * C# umožňuje posouvat kurzorem po konzoli (slouží k tomu vlastnosti CursorLeft a CursorTop třídy Console).
+             * Standardní konzole operačních systémů ovšem tento způsob výpisu často nepodporuje (tedy funguje pouze ve Windows).
+             * Proto k řešení úlohy využijeme tzv. buffer. Buffer je pole znaků v paměti, kde si připravíme, jak chceme obrazovku
+             * vykreslit, a teprve až je vše, jak potřebujeme, vykreslíme vše naráz.
+             * V tomto případě si vytvoříme buffer jako 2D pole o velikosti 79x24 znaků, tedy o 1 znak zprava a zdola menší než okno konzole,
+             * protože by jinak při výpisu posledního znaku konzole sama odřádkovala. Do tohoto bufferu zaneseme jednotlivé body sinu.
+             * Až budeme mít celý výpočet hotový, teprve poté celý buffer vykreslíme do konzole jako 24 řádků znaků.
+             *
+             * Perioda funkce sinus je 2 PI, pro průchod přes celou periodu použijte krok = 0.05.
+             * Začněte vykreslením této křivky v poměru 1:1, sice bude malá, ale bude v konzoli vidět.
+             * Abyste dosáhli výsledku jako na obrázku, musíte souřadnice vynásobit koeficienty
+             * (koeficient roztažení v ose x je 12 a koeficient roztažení v ose y je 8).
+             * Jednotlivé souřadnice bodů vypočítávejte v desetinných číslech, výsledné souřadnice teprve zaokrouhlíte
+             * na celé znaky. Typicky vypočítáte mnohem více bodů, než kolik jich je vidět, protože pozice se zaokrouhlí.
+             */
+            static void Cviceni6() {
+                char[,] buffer = new char[79,24];
+                double x = 0;
+                double y = 0;
+                int rozsireniX = 12;
+                int rozsireniY = 8;
+                for (int j = 0; j < buffer.GetLength(1); j++) {
+                    for (int i = 0; i < buffer.GetLength(0); i++) {
+                        buffer[i, j] = ' ';
+                    }
+                }
+
+                while (x < Math.PI * 2) {
+                    y = Math.Sin(x);
+                    int consoleX = (int) Math.Round(x * rozsireniX);
+                    int consoleY = 12 + (int) Math.Round(y * rozsireniY);
+                    buffer[consoleX, consoleY] = '█';
+                    x += 0.05;
+                }
+                
+                for (int j = 0; j < buffer.GetLength(1); j++) {
+                    for (int i = 0; i < buffer.GetLength(0); i++) {
+                        Console.Write(buffer[i, j]);
+                    }
+                    Console.WriteLine();
+                }
+            }
         }
     }
 }

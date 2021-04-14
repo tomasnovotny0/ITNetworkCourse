@@ -4,6 +4,9 @@ using System.Linq;
 namespace CSharpCourse {
     class Program {
         static void Main(string[] args) {
+            Cviceni5();
+            return;
+            
             int[] pole = new int[10];
             for (int i = 0; i < pole.Length; i++) {
                 pole[i] = i + 1;
@@ -125,6 +128,161 @@ namespace CSharpCourse {
                 Console.WriteLine("{0} se od mediánu odchyluje o {1}", i, i - median);
             }
             Console.ReadKey();
+        }
+
+        /*
+         * Vytvořte program, který do konzole vykreslí šachovnici. Pro tmavá pole využijte plný obdélník "█" (napíšete jej jako Alt + 219 nebo si jej
+         * zkopírujte z textu do vašeho kódu). Pro světlá pole využijte mezeru.
+         * Jelikož znaky v konzoli jsou mnohem vyšší než širší, vypište vždy 2 znaky vedle sebe, aby vypadaly dohromady jako čtverec.
+         */
+        static void Cviceni4() {
+            for (int y = 0; y < 8; y++) {
+                for (int x = 0; x < 8; x++) {
+                    bool bila = (x + y) % 2 == 0;
+                    Console.Write(bila ? "██" : "  ");
+                }
+                Console.WriteLine("");
+            }
+        }
+
+        /*
+         * Naprogramujte aplikaci, která simuluje hru piškvorky pro 2 hráče.
+         * Aplikace vykresluje hrací plochu do konzole a nechává si střídavě od hráčů zadávat souřadnice, na které pokládají své kameny.
+         */
+        static void Cviceni5() {
+            int hrac = 2;
+            bool konec = false;
+            int[,] plocha = new int[9,9];
+            string[] znaky = {" ", "O", "X"};
+            string[] hraci = {"nikdo", "hráč s kolečky", "hráč s křížky"};
+            while (!konec) {
+                Console.Clear();
+                Console.Write("  ");
+                for (int x = 0; x < plocha.GetLength(0); x++) {
+                    Console.Write(x + 1);
+                }
+                Console.WriteLine();
+                for (int y = 0; y < plocha.GetLength(1); y++) {
+                    Console.Write(y + 1 + " ");
+                    for (int x = 0; x < plocha.GetLength(0); x++) {
+                        int znak = plocha[x, y];
+                        Console.Write(znaky[znak]);
+                    }
+                    Console.WriteLine();
+                }
+                if (!konec) {
+                    hrac = hrac == 1 ? 2 : 1;
+                    Console.WriteLine("\nNa řadě je {0}", hraci[hrac]);
+                    bool prazdnyZnak = false;
+                    int x = 1;
+                    int y = 1;
+                    while (!prazdnyZnak) {
+                        Console.Write("Zadej pozici X kam chceš táhnout: ");
+                        while (!int.TryParse(Console.ReadLine(), out x)) {
+                            Console.WriteLine("Zadej prosím celé číslo");
+                        }
+                        Console.Write("Zadej pozici Y kam chceš táhnout: ");
+                        while (!int.TryParse(Console.ReadLine(), out y)) {
+                            Console.WriteLine("Zadej prosím celé číslo");
+                        }
+
+                        if (x >= 1 && x <= 9 && y >= 1 && y <= 9 && plocha[x - 1, y - 1] == 0) {
+                            prazdnyZnak = true;
+                        }
+                        else {
+                            Console.WriteLine("Neplatná pozice, zadej ji prosím znovu");
+                        }
+
+                        plocha[x - 1, y - 1] = hrac;
+                    }
+                    // kontrola výhry
+                    // kontrola řádku
+                    int radekX = x;
+                    int rada = 1;
+                    while (--radekX > 0 && plocha[radekX - 1, y - 1] == hrac) {
+                        ++rada;
+                    }
+                    radekX = x;
+                    while (++radekX <= 9 && plocha[radekX - 1, y - 1] == hrac) {
+                        ++rada;
+                    }
+                    if (rada >= 5) {
+                        Console.WriteLine("Vyhrál {0}", hraci[hrac]);
+                        konec = true;
+                        continue;
+                    }
+                    
+                    // kontrola sloupce
+                    int radekY = y;
+                    rada = 1;
+                    while (--radekY > 0 && plocha[x - 1, radekY - 1] == hrac) {
+                        ++rada;
+                    }
+                    radekY = y;
+                    while (++radekY <= 9 && plocha[x - 1, radekY - 1] == hrac) {
+                        ++rada;
+                    }
+                    if (rada >= 5) {
+                        Console.WriteLine("Vyhrál {0}", hraci[hrac]);
+                        konec = true;
+                        continue;
+                    }
+                    
+                    // kontrola LR diagonaly
+                    radekX = x;
+                    radekY = y;
+                    rada = 1;
+                    while (--radekX > 0 && --radekY > 0 && plocha[radekX - 1, radekY - 1] == hrac) {
+                        ++rada;
+                    }
+                    radekX = x;
+                    radekY = y;
+                    while (++radekX <= 9 && ++radekY <= 9 && plocha[radekX - 1, radekY - 1] == hrac) {
+                        ++rada;
+                    }
+                    if (rada >= 5) {
+                        Console.WriteLine("Vyhrál {0}", hraci[hrac]);
+                        konec = true;
+                        continue;
+                    }
+                    
+                    // kontrola RL diagonaly
+                    radekX = x;
+                    radekY = y;
+                    rada = 1;
+                    while (--radekX > 0 && ++radekY <= 9 && plocha[radekX - 1, radekY - 1] == hrac) {
+                        ++rada;
+                    }
+                    radekX = x;
+                    radekY = y;
+                    while (++radekX <= 9 && --radekY > 0 && plocha[radekX - 1, radekY - 1] == hrac) {
+                        ++rada;
+                    }
+                    if (rada >= 5) {
+                        Console.WriteLine("Vyhrál {0}", hraci[hrac]);
+                        konec = true;
+                        continue;
+                    }
+                    
+                    // kontrola plné hrací plochy
+                    bool nalezenoPrazneMisto = false;
+                    for (int i = 0; i < plocha.GetLength(1); i++) {
+                        for (int j = 0; j < plocha.GetLength(0); j++) {
+                            int znak = plocha[j, i];
+                            if (znak == 0) {
+                                nalezenoPrazneMisto = true;
+                                goto pokracovani;
+                            }
+                        }
+                    }
+                    pokracovani:
+                    if (!nalezenoPrazneMisto) {
+                        konec = true;
+                        Console.WriteLine("Remíza.");
+                        continue;
+                    }
+                }
+            }
         }
     }
 }

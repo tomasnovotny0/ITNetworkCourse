@@ -3,36 +3,57 @@
 namespace CSharpCourse {
     class Program {
         static void Main(string[] args) {
-            Auto auto = new Auto("123ABC", "Modrá");
-            Garaz garaz = new Garaz();
-            garaz.Zaparkuj(auto);
-            Console.WriteLine(garaz);
+            Osoba karel = new Osoba("Karel");
+            Osoba lenka = new Osoba("Lenka");
+            Pes azor = new Pes("Azor");
+            karel.PridatPsa(azor);
+            lenka.PridatPsa(azor);
+            karel.VratPsa().Zestarni();
+            Console.WriteLine(azor);
+            lenka.VratPsa().Zestarni(2);
+            Console.WriteLine(azor);
         }
     }
 
-    class Auto {
-        private string spz;
-        private string barva;
+    class Osoba {
+        private string jmeno;
+        private Pes pes;
 
-        public Auto(string spz, string barva) {
-            this.spz = spz;
-            this.barva = barva;
+        public Osoba(string jmeno) {
+            this.jmeno = jmeno;
         }
 
-        public override string ToString() {
-            return spz;
+        public void PridatPsa(Pes pes) {
+            this.pes = pes;
+        }
+
+        public bool MaPsa() {
+            return pes != null;
+        }
+
+        public Pes VratPsa() {
+            return pes;
         }
     }
 
-    class Garaz {
-        private Auto auto;
+    class Pes {
+        private string jmeno;
+        private byte vek;
 
-        public void Zaparkuj(Auto auto) {
-            this.auto = auto;
+        public Pes(string jmeno) {
+            this.jmeno = jmeno;
+        }
+
+        public void Zestarni() {
+            Zestarni(1);
+        }
+
+        public void Zestarni(byte roky) {
+            vek += roky;
         }
 
         public override string ToString() {
-            return string.Format("V garáži je auto: {0}", auto);
+            return string.Format("{0} ({1} let)", jmeno, vek);
         }
     }
 

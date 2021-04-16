@@ -6,7 +6,7 @@ namespace CSharpCourse {
         static void Main(string[] args) {
             Kostka kostka = new Kostka(10);
             Bojovnik zalgoren = new Bojovnik("Zalgoren", 100, 20, 10, kostka);
-            Bojovnik shadow = new Bojovnik("Shadow", 60, 18, 15, kostka);
+            Bojovnik shadow = new Mag("Shadow", 60, 18, 15, kostka, 30, 45);
             Arena arena = new Arena(zalgoren, shadow, kostka);
             arena.SpustZapas();
             Console.ReadKey();
@@ -54,20 +54,63 @@ namespace CSharpCourse {
         private void Vykresli() {
             Console.Clear();
             Console.WriteLine("-------------- Aréna -------------- \n");
-            Console.WriteLine("Zdraví bojovníků:\n");
-            Console.WriteLine("{0} {1}", bojovnik1, bojovnik1.ZivotGraficky());
-            Console.WriteLine("{0} {1}", bojovnik2, bojovnik2.ZivotGraficky());
+            Console.WriteLine("Bojovníci:\n");
+            VypisBojovnika(bojovnik1);
+            Console.WriteLine();
+            VypisBojovnika(bojovnik2);
+            Console.WriteLine();
+        }
+
+        private void VypisBojovnika(Bojovnik bojovnik) {
+            Console.WriteLine(bojovnik);
+            Console.Write("Život: ");
+            Console.WriteLine(bojovnik.ZivotGraficky());
+            if (bojovnik is Mag mag)
+            {
+                Console.Write("Mana:  ");
+                Console.WriteLine(mag.ManaGraficky());
+            }
+        }
+    }
+
+    class Mag : Bojovnik {
+
+        private int mana;
+        private int maxMana;
+        private int magickyUtok;
+        
+        public Mag(string jmeno, int zivot, int utok, int obrana, Kostka kostka, int mana, int magickyUtok) : base(jmeno, zivot, utok, obrana, kostka) {
+            this.maxMana = mana;
+            this.mana = mana;
+            this.magickyUtok = magickyUtok;
+        }
+
+        public override void Zautoc(Bojovnik souper) {
+            if (mana == maxMana) {
+                int uder = magickyUtok + kostka.Hod();
+                NastavZpravu(String.Format("{0} použil magii za {1} hp", jmeno, uder));
+                souper.BranSe(uder);
+                mana = 0;
+            }
+            else {
+                mana = Math.Min(maxMana, mana + 10);
+                base.Zautoc(souper);
+            }
+        }
+
+        public string ManaGraficky() {
+            return GrafickyUkazatel(mana, maxMana);
         }
     }
 
     class Bojovnik {
 
-        private string jmeno;
-        private int zivot;
-        private int maxZivot;
-        private int utok;
-        private int obrana;
-        private Kostka kostka;
+        protected string jmeno;
+        protected int zivot;
+        protected int maxZivot;
+        protected int utok;
+        protected int obrana;
+        protected Kostka kostka;
         private string zprava = "";
 
         public Bojovnik(string jmeno, int zivot, int utok, int obrana, Kostka kostka) {
@@ -79,7 +122,7 @@ namespace CSharpCourse {
             this.kostka = kostka;
         }
 
-        public void BranSe(int uder) {
+        public virtual void BranSe(int uder) {
             int zraneni = uder - (obrana + kostka.Hod());
             string zprava;
             if (zraneni > 0) {
@@ -95,7 +138,7 @@ namespace CSharpCourse {
             NastavZpravu(zprava);
         }
 
-        public void Zautoc(Bojovnik souper) {
+        public virtual void Zautoc(Bojovnik souper) {
             int uder = utok + kostka.Hod();
             NastavZpravu(string.Format("{0} útočí s úderem za {1} hp", jmeno, uder));
             souper.BranSe(uder);
@@ -106,20 +149,20 @@ namespace CSharpCourse {
         /// </summary>
         /// <returns>životy tohoto bojovníka grafiky jako [#####  ]</returns>
         public string ZivotGraficky() {
+            return GrafickyUkazatel(zivot, maxZivot);
+        }
+
+        protected string GrafickyUkazatel(int hodnota, int maximalniHodnota) {
+            string s = "[";
             int celkem = 20;
-            double pocet = Math.Round((double) zivot / maxZivot * celkem);
-            if (pocet == 0 && JeNazivu()) {
-                ++pocet;
-            }
-
-            string graficky = "[";
-            for (int i = 0; i < pocet; i++) {
-                graficky += "#";
-            }
-
-            graficky = graficky.PadRight(celkem + 1);
-            graficky += "]";
-            return graficky;
+            double pocet = Math.Round(((double)hodnota / maximalniHodnota) * celkem);
+            if (pocet == 0 && JeNazivu())
+                pocet = 1;
+            for (int i = 0; i < pocet; i++)
+                s += "#";
+            s = s.PadRight(celkem + 1);
+            s += "]";
+            return s;
         }
         
         public bool JeNazivu() {
@@ -139,7 +182,7 @@ namespace CSharpCourse {
             zivot = Math.Min(maxZivot, Math.Max(0, noveHp));
         }
 
-        private void NastavZpravu(string zprava) {
+        protected void NastavZpravu(string zprava) {
             this.zprava = zprava;
         }
 
